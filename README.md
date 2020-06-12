@@ -12,12 +12,12 @@ This guide's a work in progress... 👨‍🔧
   + [Configure the Open Virtual Machine Firmware (OVMF) for PCI passthrough](#configure-the-open-virtual-machine-firmware--ovmf--for-pci-passthrough)
   + [Setting up a network bridge](#setting-up-a-network-bridge)
 * [Guest OS: macOS Catalina](#guest-os--macos-catalina)
-* [Host OS: Windows 10](#host-os--windows-10)
+* [Guest OS: Windows 10](#host-os--windows-10)
 * [Resources](#resources)
 
 ## Intro
 
-Recently I switched from a Windows and macOS (Hackintosh) dual boot on my main system to a Linux install so I could use its type-1 (bare-metal) hypervisor to run the two aforementioned OS as kernel-based virtual machines (KVMs). The main benefit of this setup is the ability to pause one OS and switch to the other, rather than having to reboot, while the drop in overall performance is negligible thanks to hardware passthrough. Having the OS and boot files on a virtual disk that I can take snapshots of (e.g. prior to a system update) sounds really nice too.
+Recently I switched from a Windows and macOS (Hackintosh) dual boot on my main system to a Linux install so I could use its type-1 (bare-metal) hypervisor to run the two aforementioned OS as kernel-based virtual machines (KVMs). The main benefit of this setup is the ability to pause one OS and switch to the other, rather than having to reboot, while the drop in overall performance is negligible thanks to hardware passthrough. Having the OS and boot files on a virtual disk that I can take snapshots of (e.g. prior to a system update) is really nice too!
 
 I set up this repo to remind my future self of the steps I took to get everything working and have versioning of important configuration files. Special thanks to all my past selves to keep this up-to-date.
 
@@ -25,25 +25,25 @@ I set up this repo to remind my future self of the steps I took to get everythin
 
 My current build ~~to flex~~ as a reference, as some of the configuration is specific to my build.
 
-| Hardware    | Brand                                                                                                             | Purchase date |
-|-------------|-------------------------------------------------------------------------------------------------------------------|---------------|
-| Motherboard | Gigabyte GA-Z270-HD3P Intel Z270 LGA 1151 (ATX, Socket H4)                                                        | Oct 2017      |
-| CPU         | Intel Core i7 7700 Kaby Lake (8MB, 3.60/4.20 GHz)                                                                 | Oct 2017      |
-| RAM         | 4x Crucial 8GB DDR4-2400                                                                                          | Oct 2017      |
-| GPU         | 1x Asus Expedition AMD Radeon RX 570 OC 4GB GDDR5<br>1x Asus ROG Strix Nvidia GeForce RTX 2070 SUPER OC 8GB GDDR6 | Oct 2018<br>June 2020|
-| NIC         | Apple Broadcom BCM94360CD (802.11 a/b/g/n/ac, Bluetooth 4.0)                                                      | Oct 2017      |
-| PSU         | NZXT C750 80+ Gold 750W                                                                                           | June 2020     |
-| Storage     | 1x 1TB WD SSD (SATA)<br>1x 1TB WD HDD (SATA)<br>1x 250GB Crucial SSD (SATA)<br>1x 250GB Kingston SSD (SATA)       | June 2020<br>Oct 2017<br>Oct 2017<br>Jan 2019 |
-| Peripherals | 1x cheap USB webcam and microphone<br>1x cheap USB mouse<br>1x cheap USB keyboard                                 | Oct 2017<br>Oct 2017<br>Oct 2017 |
+| Hardware    | Brand                                                                                                                            | Purchase date                                 |
+|-------------|----------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
+| Motherboard | Gigabyte GA-Z270-HD3P Intel Z270 LGA 1151 (ATX, Socket H4)                                                                       | Oct 2017                                      |
+| CPU         | Intel Core i7 7700 Kaby Lake (8MB, 3.60/4.20 GHz)                                                                                | Oct 2017                                      |
+| RAM         | 4x Crucial 8GB DDR4-2400                                                                                                         | Oct 2017                                      |
+| GPU         | 1x Asus Expedition AMD Radeon RX 570 OC 4GB GDDR5<br>1x Asus ROG Strix Nvidia GeForce RTX 2070 SUPER OC 8GB GDDR6                | Oct 2018<br>June 2020                         |
+| NIC         | Apple Broadcom BCM94360CD (802.11 a/b/g/n/ac, Bluetooth 4.0)                                                                     | Oct 2017                                      |
+| PSU         | NZXT C750 80+ Gold 750W                                                                                                          | June 2020                                     |
+| Storage     | 1x WD Blue 1TB (SATA SSD)<br>1x WD Blue 1TB (SATA HDD)<br>1x Crucial MX300 275GB (SATA SSD)<br>1x Kingston A400 240GB (SATA SSD) | June 2020<br>Oct 2017<br>Oct 2017<br>Jan 2019 |
+| Peripherals | 1x Logitech B910 HD USB Webcam & Microphone<br>1x cheap USB mouse<br>1x cheap USB keyboard                                       | Oct 2017<br>Oct 2017<br>Oct 2017              |
 
 ### Important Notes
 
-- You will need a CPU that supports virtualization and have VT-d and VT-x (Intel) or AMD-Vi (AMD) enabled in the BIOS.
+- You will need a CPU that supports virtualization and have VT-d and VT-x (Intel) or AMD-V (AMD) enabled in the BIOS.
 - If you plan on passing through your only GPU, you will need a CPU with integrated graphics enabled in the BIOS.
 
 ## Host OS: Manjaro Linux
 
-Went with Manjaro so I could have a lightweight Arch based Linux distro as the host OS without having too much trouble setting everything up — Manjaro's installation process is very intuitive and straight-forward. However, any recent Linux distro should work though some commands might be different if it is not Arch based. A Red Hat distro like CentOS or Fedora is worth considering as KVM is a Red Hat technology.
+Went with Manjaro so I could have a lightweight Arch based Linux distro as the host OS without having too much trouble setting everything up — Manjaro's installation process is very intuitive and straightforward. However, any recent Linux distro should work though some commands might be different if it is not Arch based. A Red Hat distro like CentOS or Fedora is worth considering as KVM is a Red Hat technology.
 
 I've also chosen to use the Xfce desktop environment as it is modular and modern _enough_ while remaining relatively lightweight. Any DE is fine, and you can choose to not install one and use the CLI ~~if you hate yourself~~.
 
@@ -103,12 +103,12 @@ sudo virsh net-autostart default
 
 ### Setting up a network bridge
 
-Creating a network bridge in Linux that can be passed as a network interface controller (NIC) to a guest VM allows that VM to be in the same network as the host with minimum configuration required. This means that the guest OS will get its IP address from the home router/DHCP server and will be able to interact with other devices that are in the same network, such as network printers or speakers.
+Creating a network bridge in Linux that can be passed as a network interface controller (NIC) to a guest VM allows that VM to be in the same network as the host with minimum configuration required. This means that the guest OS will get its IP address from the home router/DHCP server and will be able to interact with other devices that are in the same network, such as network printers or network speakers.
 
-While not strictly necessary, the first thing one can do is disable [Predictable Network Interface Names](https://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames/) that ship with `systemd`. This will make it so the ethernet interface will be `eth0` again, which is fine on consumer motherboards that do not have multiple ethernet interfaces.
+While not strictly necessary, the first thing one can do is disable [Predictable Network Interface Names](https://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames/) that ship with `systemd`. This will make it so the ethernet interface will be `eth0` again, which is fine on consumer grade motherboards that do not have multiple ethernet interfaces.
 ```shell
 sudo ln -s /dev/null /etc/systemd/network/99-default.link
-sudo systemctl restart NetworkManager.service # Not sure if this is enough -- if not: reboot
+sudo systemctl restart NetworkManager.service # Not sure if this is enough -- if not: just reboot
 ```
 `ip a` should now list your ethernet adapter as `eth0`. E.g.:
 ```text
@@ -118,12 +118,12 @@ sudo systemctl restart NetworkManager.service # Not sure if this is enough -- if
        valid_lft forever preferred_lft forever
 2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
     link/ether 52:54:00:8c:62:44 brd ff:ff:ff:ff:ff:ff
-    inet 192.168.121.241/24 brd 192.168.121.255 scope global dynamic eth0
+    inet 192.168.0.2/24 brd 192.168.121.255 scope global dynamic eth0
        valid_lft 2900sec preferred_lft 2900sec
     inet6 fe80::5054:ff:fe8c:6244/64 scope link
        valid_lft forever preferred_lft forever
 ```
-I used `netctl` instead of `NetworkManager`, which came with Manjaro, to set up the bridge. However, I believe it should be perfectly possible to do so with `NetworkManager` too — just haven't looked into this. To avoid conflicts, stop `NetworkManager` first, then install `netctl`.
+I used `netctl` instead of `NetworkManager`, which came with Manjaro, to set up the bridge. However, I believe it should/might be perfectly possible to do so with `NetworkManager` too — I just haven't looked into this. To avoid conflicts, stop `NetworkManager` first, then install `netctl`.
 ```shell
 sudo systemctl stop NetworkManager.service
 sudo pacman -Sy netctl
@@ -132,7 +132,7 @@ To define a new network bridge, create its configuration file in `/etc/netctl` a
 ```shell
 sudo nano /etc/netctl/bridge
 ```
-Below is a basic bridge configuration that should suffice for most use-cases. More exotic bridge configurations are not in scope of this guide. Make sure `BindsToInterface` is set to your ethernet interface (which is `eth0` if Predictable Network Interface Names is disabled) and `Interface` "makes sense" (by convention it should start with `br`).
+Below is a basic bridge configuration that should suffice for most use-cases. More exotic bridge configurations are beyond the scope of this guide. Make sure `BindsToInterface` is set to your ethernet interface (which is `eth0` if Predictable Network Interface Names is disabled) and `Interface` "makes sense" (by convention it should start with `br`).
 ```text
 Description="Bridge Connection for KVM"
 Interface=br0
@@ -140,7 +140,7 @@ Connection=bridge
 BindsToInterfaces=(eth0)
 IP=dhcp
 ```
-Once defined, we can enable and start the bridge. The last argument of the commands below is the file name of your bridge configuration.
+Once defined, we can enable and start the bridge. The last argument passed to the `netctl` commands is the file name of the bridge configuration we created in the previous step.
 ```shell
 sudo netctl enable bridge
 sudo netctl start bridge
@@ -165,7 +165,7 @@ sudo -s
 modprobe tun
 echo "tun" > /etc/modules-load.d/tun.conf
 ```
-To have the bridge behave properly when QEMU starts a guest VM, we need to create a `qemu-ifup` and `qemu-ifdown` script in `/etc`. These files do not have an extension and you will need `sudo` to create them. Their contents should be as follows:
+To have the bridge behave properly when QEMU starts a guest VM, we need to create a `qemu-ifup` and `qemu-ifdown` script in `/etc`. These files do not have an extension and you will need `sudo` to create them. Their respective contents should be as follows:
 ```shell
 #!/bin/sh
 echo "Executing /etc/qemu-ifup"
@@ -242,7 +242,7 @@ Great! The bridge is now set up and will put guests on the same network as the h
 
 To be added...
 
-## Host OS: Windows 10
+## Guest OS: Windows 10
 
 To be added...
 
