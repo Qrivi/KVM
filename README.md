@@ -214,7 +214,7 @@ sudo -s
 modprobe br_netfilter
 cat /etc/modules-load.d/br_netfilter.conf
 # Only if cat does not output "br_netfilter", add it. Must not be defined twice.
-echo "br_netfilter" > /etc/modules-load.d/br_netfilter.conf
+echo "br_netfilter" >> /etc/modules-load.d/br_netfilter.conf
 ```
 In order to immediatly apply the updated configuration, we can reload the configuration file.
 ```shell
