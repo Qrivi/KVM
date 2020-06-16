@@ -1,3 +1,9 @@
+*.cqow2
+*.iso
+*.img
+*.dmg
+*.sucatalog
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
