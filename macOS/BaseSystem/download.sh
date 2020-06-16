@@ -45,19 +45,19 @@ getVersions() {
 }
 
 prettifyVersion() {
-  v=$(echo $@)
-  case $@ in
-  ^10\.15)
-    echo macOS "${v:0:7}" Catalina \("${v: -10}"\)
+  version=$(echo $@)
+  case $version in
+  10.15.*)
+    echo macOS "${version:0:7}" Catalina \("${version: -10}"\)
     ;;
-  ^10\.14)
-    echo macOS "${v:0:7}" Mojave \("${v: -10}"\)
+  10.14.*)
+    echo macOS "${version:0:7}" Mojave \("${version: -10}"\)
     ;;
-  ^10\.13)
-    echo macOS "${v:0:7}" High Sierra \("${v: -10}"\)
+  10.13.*)
+    echo macOS "${version:0:7}" High Sierra \("${version: -10}"\)
     ;;
   *)
-    echo macOS "${v:0:7}" \("${v: -10}"\)
+    echo macOS "${version:0:7}" \("${version: -10}"\)
     ;;
   esac
 }
