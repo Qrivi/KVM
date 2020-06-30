@@ -1,4 +1,5 @@
 #!/bin/sh
+
 echo "Executing /etc/qemu-ifup"
 echo "Bringing up $1 for bridged mode..."
 sudo /usr/bin/ip link set $1 up promisc on
