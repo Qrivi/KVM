@@ -6,7 +6,6 @@
 *.zip
 
 # temp
-*.fd
 macOS/OpenCore/EFI/*
 
 # Windows image file caches

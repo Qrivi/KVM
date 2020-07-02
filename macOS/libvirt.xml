@@ -29,8 +29,8 @@
   </cputune>
   <os>
     <type arch="x86_64" machine="pc-q35-5.0">hvm</type>
-    <loader readonly="yes" type="pflash">/home/qrivi/KVM/macOS/base/OVMF_CODE.fd</loader>
-    <nvram>/home/qrivi/KVM/macOS/base/OVMF_VARS-1024x768.fd</nvram>
+    <loader readonly="yes" type="pflash">/home/qrivi/KVM/macOS/OVMF/OVMF_CODE.fd</loader>
+    <nvram>/home/qrivi/KVM/macOS/OVMF/OVMF_VARS-1024x768.fd</nvram>
     <boot dev="hd"/>
   </os>
   <features>
