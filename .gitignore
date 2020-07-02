@@ -1,8 +1,13 @@
-*.cqow2
+*.qcow2
 *.iso
 *.img
 *.dmg
 *.sucatalog
+*.zip
+
+# temp
+*.fd
+macOS/OpenCore/EFI/*
 
 # Windows image file caches
 Thumbs.db
