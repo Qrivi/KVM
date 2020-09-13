@@ -37,9 +37,13 @@
     <acpi/>
     <apic/>
   </features>
-  <cpu mode="host-passthrough" check="none">
+  <cpu mode="host-passthrough" check="none" migratable="on">
     <topology sockets="1" dies="1" cores="4" threads="2"/>
+    <feature policy="require" name="topoext"/>
     <feature policy="require" name="invtsc"/>
+    <feature policy="require" name="monitor"/>
+    <feature policy="require" name="x2apic"/>
+    <feature policy="require" name="svm"/>
     <feature policy="require" name="hypervisor"/>
     <feature policy="require" name="vme"/>
     <feature policy="require" name="vmx"/>
@@ -80,6 +84,12 @@
       <source dev="/dev/sdc"/>
       <target dev="vdb" bus="virtio"/>
       <address type="pci" domain="0x0000" bus="0x06" slot="0x00" function="0x0"/>
+    </disk>
+    <disk type="block" device="disk">
+      <driver name="qemu" type="raw" cache="none" io="native"/>
+      <source dev="/dev/sdb1"/>
+      <target dev="vdc" bus="virtio"/>
+      <address type="pci" domain="0x0000" bus="0x07" slot="0x00" function="0x0"/>
     </disk>
     <disk type="file" device="disk">
       <driver name="qemu" type="qcow2" cache="writeback" io="threads"/>
@@ -181,18 +191,11 @@
       </source>
       <address type="pci" domain="0x0000" bus="0x05" slot="0x00" function="0x0"/>
     </hostdev>
-    <hostdev mode="subsystem" type="usb" managed="yes">
-      <source>
-        <vendor id="0x05ac"/>
-        <product id="0x828d"/>
-      </source>
-      <address type="usb" bus="0" port="3"/>
-    </hostdev>
     <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
-        <address domain="0x0000" bus="0x08" slot="0x00" function="0x0"/>
+        <address domain="0x0000" bus="0x00" slot="0x14" function="0x0"/>
       </source>
-      <address type="pci" domain="0x0000" bus="0x07" slot="0x00" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x09" slot="0x01" function="0x0"/>
     </hostdev>
     <memballoon model="none"/>
   </devices>

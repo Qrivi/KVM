@@ -51,9 +51,13 @@
     <vmport state="off"/>
     <ioapic driver="kvm"/>
   </features>
-  <cpu mode="host-passthrough" check="partial">
+  <cpu mode="host-passthrough" check="partial" migratable="on">
     <topology sockets="1" dies="1" cores="4" threads="2"/>
+    <feature policy="require" name="topoext"/>
     <feature policy="require" name="invtsc"/>
+    <feature policy="require" name="monitor"/>
+    <feature policy="require" name="x2apic"/>
+    <feature policy="require" name="svm"/>
     <feature policy="require" name="hypervisor"/>
     <feature policy="require" name="vme"/>
     <feature policy="require" name="vmx"/>
@@ -85,6 +89,12 @@
       <source dev="/dev/sdd"/>
       <target dev="vdb" bus="virtio"/>
       <address type="pci" domain="0x0000" bus="0x0b" slot="0x00" function="0x0"/>
+    </disk>
+    <disk type="block" device="disk">
+      <driver name="qemu" type="raw" cache="none" io="native"/>
+      <source dev="/dev/sdb2"/>
+      <target dev="vdc" bus="virtio"/>
+      <address type="pci" domain="0x0000" bus="0x05" slot="0x00" function="0x0"/>
     </disk>
     <controller type="usb" index="0" model="qemu-xhci" ports="15">
       <address type="pci" domain="0x0000" bus="0x02" slot="0x00" function="0x0"/>
@@ -185,9 +195,9 @@
     </hostdev>
     <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
-        <address domain="0x0000" bus="0x08" slot="0x00" function="0x0"/>
+        <address domain="0x0000" bus="0x05" slot="0x00" function="0x0"/>
       </source>
-      <address type="pci" domain="0x0000" bus="0x05" slot="0x00" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x08" slot="0x00" function="0x0"/>
     </hostdev>
     <memballoon model="virtio">
       <address type="pci" domain="0x0000" bus="0x06" slot="0x00" function="0x0"/>
